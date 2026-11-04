@@ -32,6 +32,5 @@ jobs:
 
     - name: Análisis Estático de Código (Linting con Flake8)
       run: |
-        # Verifica errores críticos de sintaxis en ambos backends
         flake8 backend/microservicio_fastapi --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 backend/orquestador_django --count --select=E9,F63,F7,F82 --show-source --statistics
