@@ -12,64 +12,71 @@
 
 <body class="bg-slate-900 text-white min-h-screen p-8">
     <div class="max-w-2xl mx-auto space-y-6">
-        <header class="border-b border-slate-700 pb-4">
-            <h1 class="text-3xl font-bold text-blue-400">Atención Rural Dispersa</h1>
-            <p class="text-slate-400 text-sm">Autenticación OAuth 2.0 & Optimización de Rutas</p>
-        </header>
-
-        <!-- Formulario de Autenticación -->
-        <div id="auth-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
-            <h2 class="text-xl font-semibold mb-4 text-slate-200">1. Autenticación de Personal Médico</h2>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Correo Electrónico</label>
-                    <input type="email" id="email" placeholder="medico@salud.gov.co"
-                        class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Contraseña</label>
-                    <input type="password" id="password" placeholder="••••••••"
-                        class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
-                </div>
-                <div class="flex gap-4">
-                    <button onclick="login()"
-                        class="w-1/2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded transition">Iniciar
-                        Sesión</button>
-                    <button onclick="registrar()"
-                        class="w-1/2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 rounded transition">Crear
-                        Cuenta</button>
-                </div>
+        <main id="login-view">
+            <div id="auth-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+                <h1 class="text-2xl font-bold text-blue-400 mb-2">Atención Rural Dispersa</h1>
+                <h2 class="text-xl font-semibold mb-4 text-slate-200">Autenticación de Personal Médico</h2>
+                <form class="space-y-4" onsubmit="event.preventDefault(); login()">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Correo Electrónico</label>
+                        <input type="email" id="email" placeholder="medico@salud.gov.co"
+                            class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Contraseña</label>
+                        <input type="password" id="password" placeholder="••••••••"
+                            class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="submit"
+                            class="w-1/2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded transition">Iniciar
+                            Sesión</button>
+                        <button type="button" onclick="registrar()"
+                            class="w-1/2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 rounded transition">Crear
+                            Cuenta</button>
+                    </div>
+                </form>
+                <p id="auth-status" class="mt-3 text-sm hidden" role="alert" aria-live="polite"></p>
             </div>
-            <p id="auth-status" class="mt-3 text-sm hidden"></p>
-        </div>
+        </main>
 
-        <!-- Panel de Optimización de Ruta -->
-        <div id="route-card"
-            class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg opacity-50 pointer-events-none">
-            <h2 class="text-xl font-semibold mb-4 text-slate-200">2. Calcular Ruta Priorizada</h2>
-            <div class="grid grid-cols-2 gap-4 mb-4">
+        <main id="dashboard-view" class="hidden space-y-6">
+            <header class="border-b border-slate-700 pb-4 flex items-center justify-between gap-4">
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Latitud Origen</label>
-                    <input type="number" id="lat" value="5.300" step="0.001"
-                        class="w-full p-3 rounded bg-slate-700 border border-slate-600">
+                    <h1 class="text-3xl font-bold text-blue-400">Atención Rural Dispersa</h1>
+                    <p class="text-slate-400 text-sm">Optimización de Rutas</p>
                 </div>
-                <div>
-                    <label class="block text-xs text-slate-400 mb-1">Longitud Origen</label>
-                    <input type="number" id="lon" value="-73.810" step="0.001"
-                        class="w-full p-3 rounded bg-slate-700 border border-slate-600">
+                <button onclick="logout()"
+                    class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded transition">Cerrar
+                    sesión</button>
+            </header>
+
+            <div id="route-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+                <h2 class="text-xl font-semibold mb-4 text-slate-200">Calcular Ruta Priorizada</h2>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Latitud Origen</label>
+                        <input type="number" id="lat" value="5.300" step="0.001"
+                            class="w-full p-3 rounded bg-slate-700 border border-slate-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Longitud Origen</label>
+                        <input type="number" id="lon" value="-73.810" step="0.001"
+                            class="w-full p-3 rounded bg-slate-700 border border-slate-600">
+                    </div>
                 </div>
+                <button onclick="solicitarRuta()"
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded transition">Generar
+                    Ruta Óptima</button>
             </div>
-            <button onclick="solicitarRuta()"
-                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded transition">Generar
-                Ruta Óptima</button>
-        </div>
 
-        <!-- Resultados -->
-        <div id="results-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg hidden">
-            <h2 class="text-xl font-semibold mb-2 text-emerald-400">Ruta Priorizada Generada</h2>
-            <p id="distancia-total" class="text-slate-300 mb-4 font-mono"></p>
-            <div id="veredas-list" class="space-y-2"></div>
-        </div>
+            <div id="results-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg hidden">
+                <h2 class="text-xl font-semibold mb-2 text-emerald-400">Ruta Priorizada Generada</h2>
+                <p id="distancia-total" class="text-slate-300 mb-4 font-mono"></p>
+                <div id="veredas-list" class="space-y-2"></div>
+            </div>
+            <p id="dashboard-status" class="text-sm text-red-400 hidden"></p>
+        </main>
     </div>
 
     <script>
@@ -83,46 +90,114 @@
             appId: "1:808331910760:web:90cdea6df87f9029ee65dd"
         };
 
-        firebase.initializeApp(firebaseConfig);
         let userToken = "";
 
-        // Escuchador de estado de autenticación de Firebase
-        firebase.auth().onAuthStateChanged(async (user) => {
-            const status = document.getElementById('auth-status');
-            if (user) {
-                userToken = await user.getIdToken();
-                status.innerText = `¡Sesión activa: ${user.email}! Token JWT listo.`;
-                status.className = "mt-3 text-sm text-emerald-400 font-semibold";
-                status.classList.remove('hidden');
-                document.getElementById('route-card').classList.remove('opacity-50', 'pointer-events-none');
-            } else {
-                status.innerText = "No has iniciado sesión.";
-                status.className = "mt-3 text-sm text-yellow-400 font-semibold";
+        if (typeof firebase === 'undefined') {
+            mostrarError("No se pudo cargar Firebase. Revisa tu conexión y el certificado TLS del navegador; sin Firebase no es posible iniciar sesión.");
+        } else {
+            firebase.initializeApp(firebaseConfig);
+
+            // Escuchador de estado de autenticación de Firebase
+            firebase.auth().onAuthStateChanged(async (user) => {
+                const loginView = document.getElementById('login-view');
+                const dashboardView = document.getElementById('dashboard-view');
+
+                if (user) {
+                    userToken = "";
+                    dashboardView.classList.add('hidden');
+                    loginView.classList.remove('hidden');
+
+                    try {
+                        userToken = await user.getIdToken();
+                        if (firebase.auth().currentUser !== user) return;
+                        loginView.classList.add('hidden');
+                        dashboardView.classList.remove('hidden');
+                    } catch (error) {
+                        userToken = "";
+                        mostrarError(error, "No se pudo validar la sesión");
+                    }
+                } else {
+                    userToken = "";
+                    dashboardView.classList.add('hidden');
+                    loginView.classList.remove('hidden');
+                }
+            });
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            if (typeof firebase === 'undefined') {
+                mostrarError("No se pudo cargar Firebase. Revisa tu conexión y el certificado TLS del navegador.");
+                return;
             }
-        });
 
-        function login() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .catch((error) => mostrarError(error.message));
+            ocultarError();
+            try {
+                await firebase.auth().signInWithEmailAndPassword(email, pass);
+            } catch (error) {
+                mostrarError(error, "No se pudo iniciar sesión");
+            }
         }
 
-        function registrar() {
+        async function registrar() {
+            if (typeof firebase === 'undefined') {
+                mostrarError("No se pudo cargar Firebase. Revisa tu conexión y el certificado TLS del navegador.");
+                return;
+            }
+
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
-            firebase.auth().createUserWithEmailAndPassword(email, pass)
-                .catch((error) => mostrarError(error.message));
+            ocultarError();
+            try {
+                await firebase.auth().createUserWithEmailAndPassword(email, pass);
+            } catch (error) {
+                mostrarError(error, "No se pudo crear la cuenta");
+            }
         }
 
-        function mostrarError(msg) {
+        function logout() {
+            firebase.auth().signOut()
+                .catch((error) => {
+                    const status = document.getElementById('dashboard-status');
+                    status.innerText = "Error al cerrar sesión: " + error.message;
+                    status.classList.remove('hidden');
+                });
+        }
+
+        function ocultarError() {
             const status = document.getElementById('auth-status');
-            status.innerText = "Error: " + msg;
+            status.innerText = "";
+            status.classList.add('hidden');
+        }
+
+        function mostrarError(error, contexto = "Error de autenticación") {
+            const status = document.getElementById('auth-status');
+            const mensajes = {
+                "auth/invalid-email": "El formato del correo electrónico no es válido.",
+                "auth/invalid-credential": "El correo o la contraseña son incorrectos. Verifica tus datos e inténtalo de nuevo.",
+                "auth/wrong-password": "La contraseña es incorrecta. Verifícala e inténtalo de nuevo.",
+                "auth/user-not-found": "No existe una cuenta con ese correo. Revisa el correo o crea una cuenta.",
+                "auth/user-disabled": "Esta cuenta está deshabilitada. Contacta al administrador.",
+                "auth/email-already-in-use": "Ya existe una cuenta con ese correo. Inicia sesión o usa otro correo.",
+                "auth/weak-password": "La contraseña es demasiado débil. Usa al menos 6 caracteres.",
+                "auth/operation-not-allowed": "El acceso con correo y contraseña no está habilitado en Firebase.",
+                "auth/too-many-requests": "Se hicieron demasiados intentos. Espera un momento antes de volver a intentarlo.",
+                "auth/network-request-failed": "No se pudo conectar con Firebase. Revisa tu conexión a internet.",
+                "auth/invalid-api-key": "La configuración de Firebase no es válida. Revisa la API key del proyecto."
+            };
+            const code = error && error.code;
+            const detalle = mensajes[code] || (typeof error === "string" ? error : error && error.message) || "Ocurrió un error inesperado.";
+            status.innerText = `${contexto}: ${detalle}${code && !mensajes[code] ? ` (código: ${code})` : ""}`;
             status.className = "mt-3 text-sm text-red-400 font-semibold";
             status.classList.remove('hidden');
         }
 
         async function solicitarRuta() {
+            if (!firebase.auth().currentUser || !userToken) {
+                return;
+            }
+
             const lat = parseFloat(document.getElementById('lat').value);
             const lon = parseFloat(document.getElementById('lon').value);
 
