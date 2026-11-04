@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Salud Rural - Autenticación Firebase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+
+<body class="bg-slate-900 text-white min-h-screen p-8">
+    <div class="max-w-2xl mx-auto space-y-6">
+        <header class="border-b border-slate-700 pb-4">
+            <h1 class="text-3xl font-bold text-blue-400">Atención Rural Dispersa</h1>
+            <p class="text-slate-400 text-sm">Autenticación OAuth 2.0 & Optimización de Rutas</p>
+        </header>
+
+        <!-- Formulario de Autenticación -->
+        <div id="auth-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-slate-200">1. Autenticación de Personal Médico</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Correo Electrónico</label>
+                    <input type="email" id="email" placeholder="medico@salud.gov.co"
+                        class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••"
+                        class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="login()"
+                        class="w-1/2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded transition">Iniciar
+                        Sesión</button>
+                    <button onclick="registrar()"
+                        class="w-1/2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 rounded transition">Crear
+                        Cuenta</button>
+                </div>
+            </div>
+            <p id="auth-status" class="mt-3 text-sm hidden"></p>
+        </div>
+
+        <!-- Panel de Optimización de Ruta -->
+        <div id="route-card"
+            class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg opacity-50 pointer-events-none">
+            <h2 class="text-xl font-semibold mb-4 text-slate-200">2. Calcular Ruta Priorizada</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Latitud Origen</label>
+                    <input type="number" id="lat" value="5.300" step="0.001"
+                        class="w-full p-3 rounded bg-slate-700 border border-slate-600">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Longitud Origen</label>
+                    <input type="number" id="lon" value="-73.810" step="0.001"
+                        class="w-full p-3 rounded bg-slate-700 border border-slate-600">
+                </div>
+            </div>
+            <button onclick="solicitarRuta()"
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded transition">Generar
+                Ruta Óptima</button>
+        </div>
+
+        <!-- Resultados -->
+        <div id="results-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg hidden">
+            <h2 class="text-xl font-semibold mb-2 text-emerald-400">Ruta Priorizada Generada</h2>
+            <p id="distancia-total" class="text-slate-300 mb-4 font-mono"></p>
+            <div id="veredas-list" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE FIREBASE WEB (Reemplaza con los datos de tu consola Firebase)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOsVSYkuMtPb5oH8hiP5dwR-z8OxZrVbE",
+            authDomain: "Tmaratonesprog.firebaseapp.com",
+            projectId: "maratonesprog",
+            storageBucket: "maratonesprog.firebasestorage.app",
+            messagingSenderId: "808331910760",
+            appId: "1:808331910760:web:90cdea6df87f9029ee65dd"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        let userToken = "";
+
+        // Escuchador de estado de autenticación de Firebase
+        firebase.auth().onAuthStateChanged(async (user) => {
+            const status = document.getElementById('auth-status');
+            if (user) {
+                userToken = await user.getIdToken();
+                status.innerText = `¡Sesión activa: ${user.email}! Token JWT listo.`;
+                status.className = "mt-3 text-sm text-emerald-400 font-semibold";
+                status.classList.remove('hidden');
+                document.getElementById('route-card').classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                status.innerText = "No has iniciado sesión.";
+                status.className = "mt-3 text-sm text-yellow-400 font-semibold";
+            }
+        });
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .catch((error) => mostrarError(error.message));
+        }
+
+        function registrar() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            firebase.auth().createUserWithEmailAndPassword(email, pass)
+                .catch((error) => mostrarError(error.message));
+        }
+
+        function mostrarError(msg) {
+            const status = document.getElementById('auth-status');
+            status.innerText = "Error: " + msg;
+            status.className = "mt-3 text-sm text-red-400 font-semibold";
+            status.classList.remove('hidden');
+        }
+
+        async function solicitarRuta() {
+            const lat = parseFloat(document.getElementById('lat').value);
+            const lon = parseFloat(document.getElementById('lon').value);
+
+            const response = await fetch('http://127.0.0.1:8080/api/orquestador/optimizar/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                body: JSON.stringify({ lat_origen: lat, lon_origen: lon })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                mostrarResultados(data);
+            } else {
+                alert("Error del servidor: " + (data.detail || JSON.stringify(data)));
+            }
+        }
+
+        function mostrarResultados(data) {
+            const resultsCard = document.getElementById('results-card');
+            const distContainer = document.getElementById('distancia-total');
+            const listContainer = document.getElementById('veredas-list');
+
+            resultsCard.classList.remove('hidden');
+            distContainer.innerText = `Distancia total estimada: ${data.distancia_total_km} km`;
+
+            listContainer.innerHTML = '';
+            data.ruta.forEach((item, index) => {
+                listContainer.innerHTML += `
+                    <div class="p-3 bg-slate-700 rounded flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-blue-400 mr-2">${index + 1}.</span>
+                            <span>${item.nombre}</span>
+                            <span class="text-xs text-slate-400 ml-2">(Vulnerabilidad: ${item.vulnerabilidad})</span>
+                        </div>
+                        <span class="text-sm font-mono text-emerald-300">+${item.distancia_tramo_km} km</span>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+name: CI Pipeline Integrado
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v3
+
+    - name: Configurar Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+        pip install -r microservicio_fastapi/requirements.txt
+        pip install -r orquestador_django/requirements.txt
+
+    - name: Análisis de sintaxis (Linting)
+      run: |
+        # Detiene el pipeline si hay errores críticos de sintaxis en Python
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics

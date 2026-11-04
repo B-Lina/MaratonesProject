@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "nombre": "Vereda Sucuncho",
+        "lat": 5.305,
+        "lon": -73.815,
+        "vulnerabilidad": 0.8
+    },
+    {
+        "id": 2,
+        "nombre": "Vereda Volcán",
+        "lat": 5.320,
+        "lon": -73.820,
+        "vulnerabilidad": 0.9
+    },
+    {
+        "id": 3,
+        "nombre": "Vereda San José",
+        "lat": 5.290,
+        "lon": -73.800,
+        "vulnerabilidad": 0.4
+    },
+    {
+        "id": 4,
+        "nombre": "Vereda Guatancuy",
+        "lat": 5.315,
+        "lon": -73.840,
+        "vulnerabilidad": 0.7
+    },
+    {
+        "id": 5,
+        "nombre": "Vereda Tausaquira",
+        "lat": 5.285,
+        "lon": -73.790,
+        "vulnerabilidad": 0.3
+    },
+    {
+        "id": 6,
+        "nombre": "Vereda El Carmen",
+        "lat": 5.330,
+        "lon": -73.850,
+        "vulnerabilidad": 0.6
+    },
+    {
+        "id": 7,
+        "nombre": "Vereda Santa Bárbara",
+        "lat": 5.275,
+        "lon": -73.830,
+        "vulnerabilidad": 0.95
+    },
+    {
+        "id": 8,
+        "nombre": "Vereda La Isla",
+        "lat": 5.340,
+        "lon": -73.810,
+        "vulnerabilidad": 0.5
+    },
+    {
+        "id": 9,
+        "nombre": "Vereda Palacios",
+        "lat": 5.350,
+        "lon": -73.825,
+        "vulnerabilidad": 0.85
+    },
+    {
+        "id": 10,
+        "nombre": "Vereda Centro",
+        "lat": 5.310,
+        "lon": -73.815,
+        "vulnerabilidad": 0.2
+    }
+]
