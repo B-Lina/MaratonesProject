@@ -1,247 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Salud Rural - Autenticación Firebase</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1730" />
+  <title>Atención Rural Dispersa | Plataforma de rutas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{font-family:'DM Sans',system-ui,sans-serif;color:#14233b;background:#f5f8fc;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.65;cursor:wait}.hidden{display:none!important}
+    .icon{width:20px;height:20px;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .auth-shell{min-height:100vh;display:grid;grid-template-columns:minmax(340px,1fr) minmax(430px,1fr)}
+    .intro{background:#0b1d3b;position:relative;overflow:hidden;color:#fff;padding:clamp(32px,6vw,90px);display:flex;flex-direction:column;justify-content:space-between;min-height:100vh}
+    .intro:before,.intro:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.intro:before{width:540px;height:540px;background:radial-gradient(circle,rgba(47,146,191,.25),transparent 70%);right:-230px;top:10%}.intro:after{width:550px;height:550px;background:radial-gradient(circle,rgba(67,192,166,.15),transparent 70%);left:-260px;bottom:-250px}
+    .brand{position:relative;display:flex;align-items:center;gap:13px;font-family:Manrope,sans-serif;font-size:15px;font-weight:800;letter-spacing:-.02em;z-index:1}
+    .brand-mark{width:46px;height:46px;display:grid;place-items:center;background:#fff;color:#0d7895;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.09)}.brand-mark .icon{width:25px;height:25px}
+    .intro-main{z-index:1;max-width:555px;margin:70px 0}.eyebrow{color:#73dfcc;letter-spacing:.17em;font-size:11px;font-weight:800;text-transform:uppercase;margin:0 0 24px}
+    .intro h1{font-family:Manrope,sans-serif;font-size:clamp(37px,4.8vw,62px);line-height:1.11;letter-spacing:-.055em;margin:0 0 26px;font-weight:800}.intro h1 span{color:#68d6bf}
+    .intro-desc{font-size:17px;line-height:1.8;color:#bfcee2;max-width:445px;margin:0 0 38px}.highlights{display:flex;flex-wrap:wrap;gap:12px}.highlight{display:flex;align-items:center;gap:9px;padding:10px 14px;background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.10);border-radius:12px;font-size:12px;color:#dce9fa}.highlight .icon{width:16px;height:16px;color:#81decf}
+    .intro-footer{position:relative;z-index:1;color:#91a6c2;font-size:12px}.auth-side{display:flex;align-items:center;justify-content:center;padding:40px 32px}.auth-content{width:100%;max-width:440px}.mobile-brand{display:none}
+    .section-label{display:inline-flex;align-items:center;gap:8px;color:#087e83;background:#e7f7f4;border:1px solid #c9eee7;padding:8px 12px;border-radius:99px;font-size:12px;font-weight:800;margin-bottom:26px}.section-label .dot{width:7px;height:7px;background:#18a98d;border-radius:50%}
+    .auth-content h2{font-family:Manrope,sans-serif;font-size:32px;line-height:1.25;letter-spacing:-.04em;margin:0 0 9px;color:#10233f}.muted{color:#7a899c;font-size:14px;line-height:1.7}.auth-content>.muted{margin:0 0 33px}
+    .field{margin-bottom:20px}.field label{display:block;font-size:13px;font-weight:700;color:#30445f;margin-bottom:9px}.input-wrap{position:relative;display:flex;align-items:center}.input-wrap>.icon{position:absolute;left:16px;color:#8c9baf;width:19px;height:19px;pointer-events:none}
+    .input-wrap input{display:block;width:100%;border:1px solid #dce5f0;border-radius:13px;background:#fff;padding:15px 16px 15px 47px;outline:none;transition:border .2s,box-shadow .2s;color:#23354c;min-height:53px}.input-wrap input::placeholder{color:#a4afbe}.input-wrap input:focus,.plain-input:focus{border-color:#149b9b;box-shadow:0 0 0 4px rgba(16,161,152,.11)}
+    .password-input{padding-right:50px!important}.toggle-password{position:absolute;right:9px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#8795a9;padding:10px;border-radius:9px;display:grid;place-items:center}.toggle-password:hover{background:#f1f5f9}.toggle-password .icon{width:19px;height:19px}
+    .btn{display:inline-flex;justify-content:center;align-items:center;gap:10px;border-radius:12px;border:1px solid transparent;min-height:50px;padding:12px 18px;font-size:14px;font-weight:800;transition:transform .15s,background .2s,box-shadow .2s}.btn:not(:disabled):hover{transform:translateY(-1px)}.btn-primary{width:100%;background:#0d898c;color:#fff;box-shadow:0 7px 18px rgba(13,137,140,.16)}.btn-primary:hover{background:#077579}.btn-outline{width:100%;background:#fff;color:#245269;border-color:#d8e4ec}.btn-outline:hover{background:#f5fafb}.btn-dark{background:#142b49;color:#fff}.btn-dark:hover{background:#203f63}
+    .separator{display:flex;align-items:center;gap:14px;color:#91a0b1;font-size:12px;margin:22px 0}.separator:before,.separator:after{content:"";height:1px;flex:1;background:#e2e9f0}.auth-note{text-align:center;font-size:12px;color:#93a1b2;margin:24px 0 0;line-height:1.6}
+    .status{margin:18px 0 0;padding:13px 15px;border-radius:11px;font-size:13px;line-height:1.6;border:1px solid;overflow-wrap:anywhere}.status.error{background:#fff1f2;border-color:#fecdd3;color:#a5263d}.status.info{background:#eaf7fd;border-color:#bde6f5;color:#24657f}.status.success{background:#e9f8f0;border-color:#b9e9d0;color:#146c48}
+    .dashboard{min-height:100vh}.topbar{height:79px;padding:0 clamp(20px,5vw,74px);display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border-bottom:1px solid #e8edf4}.topbar .brand{color:#17304b}.topbar .brand-mark{background:#e3f5f3;color:#087f83;box-shadow:none}.user-area{display:flex;align-items:center;gap:14px}.user-email{font-size:12px;color:#66788d;max-width:250px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.logout-btn{border:1px solid #dfe7f0;background:#fff;color:#3a536c;border-radius:10px;padding:11px 14px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:8px}.logout-btn:hover{background:#f4f8fb}.logout-btn .icon{width:16px;height:16px}
+    .dash-container{max-width:1180px;margin:0 auto;padding:46px 24px 70px}.dash-eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#058c87;font-weight:800}.dash-heading{margin:12px 0 8px;font:800 clamp(27px,3.2vw,38px)/1.2 Manrope,sans-serif;letter-spacing:-.045em;color:#152c49}.dash-sub{color:#77889b;line-height:1.65;font-size:14px;margin:0 0 35px}.dash-grid{display:grid;grid-template-columns:410px minmax(0,1fr);gap:24px;align-items:start}.panel{border:1px solid #e2eaf2;background:#fff;border-radius:20px;padding:27px;box-shadow:0 10px 35px rgba(18,45,74,.035)}.panel-title{display:flex;align-items:center;gap:12px;margin:0 0 6px;font:800 17px Manrope,sans-serif;letter-spacing:-.02em}.panel-title .panel-icon{width:39px;height:39px;border-radius:12px;background:#e8f7f4;color:#078b82;display:grid;place-items:center}.panel .muted{margin:0 0 24px;font-size:13px}.panel-icon .icon{width:20px;height:20px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.plain-input{width:100%;border:1px solid #dce5f0;border-radius:11px;padding:13px;background:#fbfcfe;color:#293f57;min-width:0;outline:none;transition:.2s}.helper{font-size:11px;color:#98a6b5;margin:10px 0 21px}.route-result{min-height:333px}.empty{min-height:247px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}.empty-icon{width:65px;height:65px;display:grid;place-items:center;color:#6ca9b1;border-radius:20px;background:#edf7f8;margin-bottom:18px}.empty-icon .icon{width:30px;height:30px}.empty strong{font:800 15px Manrope,sans-serif;color:#344d64}.empty p{max-width:290px;color:#8b9bab;font-size:13px;line-height:1.7}.results-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:20px 0}.total-distance{background:#ecf9f4;border:1px solid #c5eddf;color:#15765d;border-radius:14px;padding:15px 18px;font-weight:800;font-family:Manrope,sans-serif;font-size:23px;letter-spacing:-.035em}.total-distance small{font-size:12px;color:#518a78;font-weight:600;margin-left:7px}.route-list{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}.route-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 14px;border:1px solid #e8edf4;border-radius:12px;background:#fbfcfe}.route-item-left{display:flex;align-items:center;gap:12px;min-width:0}.route-number{width:31px;height:31px;flex-shrink:0;display:grid;place-items:center;border-radius:9px;background:#e6f3f6;color:#098e9a;font-size:12px;font-weight:800}.route-name{display:block;font-weight:800;font-size:13px;color:#253d58;overflow-wrap:anywhere}.route-detail{display:block;margin-top:3px;font-size:11px;color:#8b9aab}.route-km{white-space:nowrap;font-size:13px;font-weight:800;color:#0c8c7b}.tag{font-size:11px;padding:5px 9px;border-radius:999px;background:#edf5fa;color:#4b7591;font-weight:700}.spinner{height:16px;width:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:900px){.auth-shell{grid-template-columns:1fr}.intro{min-height:auto;padding:25px 26px}.intro-main,.intro-footer{display:none}.auth-side{min-height:calc(100vh - 100px);padding:45px 22px}.dash-grid{grid-template-columns:1fr}.route-result{min-height:280px}}
+    @media(max-width:540px){.auth-content h2{font-size:27px}.topbar{padding:0 17px}.topbar .brand{font-size:12px}.topbar .brand-mark{width:39px;height:39px}.user-email{display:none}.logout-btn{font-size:0;gap:0;padding:12px}.logout-btn .icon{width:19px;height:19px}.dash-container{padding:30px 16px}.panel{padding:20px}.form-grid{grid-template-columns:1fr}.route-item{align-items:flex-start}.route-km{font-size:12px}}
+  </style>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 </head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-1 1-1-1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/><path d="M4.5 12h4l2-3 3 6 2-3h4"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><path d="M9 19h7a4 4 0 0 0 0-8H8a4 4 0 0 1 0-8h7"/><path d="m13 1 3 2-3 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 22 7-4V6l-7-4-7 4v12l7 4Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 4a3 3 0 0 1 0 6m1 3a5 5 0 0 1 3 5v2"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"/></symbol>
+  </svg>
 
-<body class="bg-slate-900 text-white min-h-screen p-8">
-    <div class="max-w-2xl mx-auto space-y-6">
-        <main id="login-view">
-            <div id="auth-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
-                <h1 class="text-2xl font-bold text-blue-400 mb-2">Atención Rural Dispersa</h1>
-                <h2 class="text-xl font-semibold mb-4 text-slate-200">Autenticación de Personal Médico</h2>
-                <form class="space-y-4" onsubmit="event.preventDefault(); login()">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Correo Electrónico</label>
-                        <input type="email" id="email" placeholder="medico@salud.gov.co"
-                            class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Contraseña</label>
-                        <input type="password" id="password" placeholder="••••••••"
-                            class="w-full p-3 rounded bg-slate-700 border border-slate-600 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div class="flex gap-4">
-                        <button type="submit"
-                            class="w-1/2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded transition">Iniciar
-                            Sesión</button>
-                        <button type="button" onclick="registrar()"
-                            class="w-1/2 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 rounded transition">Crear
-                            Cuenta</button>
-                    </div>
-                </form>
-                <p id="auth-status" class="mt-3 text-sm hidden" role="alert" aria-live="polite"></p>
-            </div>
-        </main>
+  <main id="login-view" class="auth-shell">
+    <section class="intro" aria-label="Presentación de la plataforma">
+      <div class="brand"><div class="brand-mark"><svg class="icon"><use href="#i-heart"/></svg></div><span>Atención Rural<br/>Dispersa</span></div>
+      <div class="intro-main"><p class="eyebrow">Tecnología al servicio de la salud</p><h1>Acercamos la salud a <span>cada comunidad.</span></h1><p class="intro-desc">Organiza los recorridos de atención médica, prioriza las veredas y optimiza cada desplazamiento desde un solo lugar.</p><div class="highlights"><span class="highlight"><svg class="icon"><use href="#i-route"/></svg> Rutas optimizadas</span><span class="highlight"><svg class="icon"><use href="#i-users"/></svg> Atención priorizada</span><span class="highlight"><svg class="icon"><use href="#i-shield"/></svg> Acceso seguro</span></div></div>
+      <div class="intro-footer">Plataforma digital de apoyo a la atención médica rural</div>
+    </section>
+    <section class="auth-side"><div class="auth-content"><div class="section-label"><span class="dot"></span> PORTAL DE PERSONAL MÉDICO</div><h2>Bienvenido de nuevo</h2><p class="muted">Ingresa con tus credenciales para continuar con la planificación de rutas.</p>
+      <form id="auth-form" novalidate><div class="field"><label for="email">Correo electrónico</label><div class="input-wrap"><svg class="icon"><use href="#i-mail"/></svg><input type="email" id="email" placeholder="medico@salud.gov.co" autocomplete="email" required /></div></div>
+      <div class="field"><label for="password">Contraseña</label><div class="input-wrap"><svg class="icon"><use href="#i-lock"/></svg><input class="password-input" type="password" id="password" placeholder="Ingresa tu contraseña" autocomplete="current-password" minlength="6" required /><button id="toggle-password" class="toggle-password" type="button" aria-label="Mostrar contraseña" title="Mostrar contraseña"><svg class="icon"><use href="#i-eye"/></svg></button></div></div>
+      <button id="login-button" class="btn btn-primary" type="submit">Iniciar sesión <svg class="icon"><use href="#i-arrow"/></svg></button><div class="separator">¿Primera vez en la plataforma?</div><button id="register-button" class="btn btn-outline" type="button">Crear una cuenta</button><p id="auth-status" class="status error hidden" role="alert" aria-live="polite"></p></form><p class="auth-note">Acceso para personal autorizado de atención rural.</p></div></section>
+  </main>
 
-        <main id="dashboard-view" class="hidden space-y-6">
-            <header class="border-b border-slate-700 pb-4 flex items-center justify-between gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold text-blue-400">Atención Rural Dispersa</h1>
-                    <p class="text-slate-400 text-sm">Optimización de Rutas</p>
-                </div>
-                <button onclick="logout()"
-                    class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-2 px-4 rounded transition">Cerrar
-                    sesión</button>
-            </header>
+  <main id="dashboard-view" class="dashboard hidden"><header class="topbar"><div class="brand"><div class="brand-mark"><svg class="icon"><use href="#i-heart"/></svg></div><span>Atención Rural Dispersa</span></div><div class="user-area"><span id="user-email" class="user-email"></span><button id="logout-button" class="logout-btn" type="button"><svg class="icon"><use href="#i-logout"/></svg> Cerrar sesión</button></div></header>
+    <div class="dash-container"><div class="dash-eyebrow">Panel de planificación</div><h1 class="dash-heading">Optimización de rutas médicas</h1><p class="dash-sub">Define el punto de partida y genera un recorrido priorizado para las comunidades rurales.</p><div class="dash-grid">
+      <section class="panel"><h2 class="panel-title"><span class="panel-icon"><svg class="icon"><use href="#i-pin"/></svg></span> Punto de partida</h2><p class="muted">Indica las coordenadas geográficas desde donde comienza la jornada.</p><form id="route-form"><div class="form-grid"><div class="field"><label for="lat">Latitud</label><input class="plain-input" id="lat" type="number" step="any" min="-90" max="90" value="5.300" required /></div><div class="field"><label for="lon">Longitud</label><input class="plain-input" id="lon" type="number" step="any" min="-180" max="180" value="-73.810" required /></div></div><p class="helper">Coordenadas en grados decimales (WGS84).</p><button id="route-button" class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-route"/></svg> Generar ruta priorizada</button><p id="dashboard-status" class="status error hidden" role="alert" aria-live="polite"></p></form></section>
+      <section class="panel route-result" aria-live="polite"><h2 class="panel-title"><span class="panel-icon"><svg class="icon"><use href="#i-route"/></svg></span> Resultado del recorrido</h2><p class="muted">Consulta las veredas priorizadas y la distancia estimada de cada tramo.</p><div id="route-empty" class="empty"><div class="empty-icon"><svg class="icon"><use href="#i-route"/></svg></div><strong>Tu ruta aparecerá aquí</strong><p>Introduce las coordenadas del origen y selecciona “Generar ruta priorizada”.</p></div><div id="results-card" class="hidden"><div class="results-head"><span class="tag" id="route-count">0 paradas</span><div id="distancia-total" class="total-distance"></div></div><ol id="veredas-list" class="route-list"></ol></div></section>
+    </div></div>
+  </main>
 
-            <div id="route-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
-                <h2 class="text-xl font-semibold mb-4 text-slate-200">Calcular Ruta Priorizada</h2>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Latitud Origen</label>
-                        <input type="number" id="lat" value="5.300" step="0.001"
-                            class="w-full p-3 rounded bg-slate-700 border border-slate-600">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Longitud Origen</label>
-                        <input type="number" id="lon" value="-73.810" step="0.001"
-                            class="w-full p-3 rounded bg-slate-700 border border-slate-600">
-                    </div>
-                </div>
-                <button onclick="solicitarRuta()"
-                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded transition">Generar
-                    Ruta Óptima</button>
-            </div>
-
-            <div id="results-card" class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg hidden">
-                <h2 class="text-xl font-semibold mb-2 text-emerald-400">Ruta Priorizada Generada</h2>
-                <p id="distancia-total" class="text-slate-300 mb-4 font-mono"></p>
-                <div id="veredas-list" class="space-y-2"></div>
-            </div>
-            <p id="dashboard-status" class="text-sm text-red-400 hidden"></p>
-        </main>
-    </div>
-
-    <script>
-        // CONFIGURACIÓN DE FIREBASE WEB (Reemplaza con los datos de tu consola Firebase)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOsVSYkuMtPb5oH8hiP5dwR-z8OxZrVbE",
-            authDomain: "Tmaratonesprog.firebaseapp.com",
-            projectId: "maratonesprog",
-            storageBucket: "maratonesprog.firebasestorage.app",
-            messagingSenderId: "808331910760",
-            appId: "1:808331910760:web:90cdea6df87f9029ee65dd"
-        };
-
-        let userToken = "";
-
-        if (typeof firebase === 'undefined') {
-            mostrarError("No se pudo cargar Firebase. Revisa tu conexión y el certificado TLS del navegador; sin Firebase no es posible iniciar sesión.");
-        } else {
-            firebase.initializeApp(firebaseConfig);
-
-            // Escuchador de estado de autenticación de Firebase
-            firebase.auth().onAuthStateChanged(async (user) => {
-                const loginView = document.getElementById('login-view');
-                const dashboardView = document.getElementById('dashboard-view');
-
-                if (user) {
-                    userToken = "";
-                    dashboardView.classList.add('hidden');
-                    loginView.classList.remove('hidden');
-
-                    try {
-                        userToken = await user.getIdToken();
-                        if (firebase.auth().currentUser !== user) return;
-                        loginView.classList.add('hidden');
-                        dashboardView.classList.remove('hidden');
-                    } catch (error) {
-                        userToken = "";
-                        mostrarError(error, "No se pudo validar la sesión");
-                    }
-                } else {
-                    userToken = "";
-                    dashboardView.classList.add('hidden');
-                    loginView.classList.remove('hidden');
-                }
-            });
-        }
-
-        async function login() {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            if (typeof firebase === 'undefined') {
-                mostrarError("No se pudo cargar Firebase. Revisa tu conexión y el certificado TLS del navegador.");
-                return;
-            }
-
-            ocultarError();
-            try {
-                await firebase.auth().signInWithEmailAndPassword(email, pass);
-            } catch (error) {
-                mostrarError(error, "No se pudo iniciar sesión");
-            }
-        }
-
-        async function registrar() {
-            if (typeof firebase === 'undefined') {
-                mostrarError("No se pudo cargar Firebase. Revisa tu conexión y el certificado TLS del navegador.");
-                return;
-            }
-
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            ocultarError();
-            try {
-                await firebase.auth().createUserWithEmailAndPassword(email, pass);
-            } catch (error) {
-                mostrarError(error, "No se pudo crear la cuenta");
-            }
-        }
-
-        function logout() {
-            firebase.auth().signOut()
-                .catch((error) => {
-                    const status = document.getElementById('dashboard-status');
-                    status.innerText = "Error al cerrar sesión: " + error.message;
-                    status.classList.remove('hidden');
-                });
-        }
-
-        function ocultarError() {
-            const status = document.getElementById('auth-status');
-            status.innerText = "";
-            status.classList.add('hidden');
-        }
-
-        function mostrarError(error, contexto = "Error de autenticación") {
-            const status = document.getElementById('auth-status');
-            const mensajes = {
-                "auth/invalid-email": "El formato del correo electrónico no es válido.",
-                "auth/invalid-credential": "El correo o la contraseña son incorrectos. Verifica tus datos e inténtalo de nuevo.",
-                "auth/wrong-password": "La contraseña es incorrecta. Verifícala e inténtalo de nuevo.",
-                "auth/user-not-found": "No existe una cuenta con ese correo. Revisa el correo o crea una cuenta.",
-                "auth/user-disabled": "Esta cuenta está deshabilitada. Contacta al administrador.",
-                "auth/email-already-in-use": "Ya existe una cuenta con ese correo. Inicia sesión o usa otro correo.",
-                "auth/weak-password": "La contraseña es demasiado débil. Usa al menos 6 caracteres.",
-                "auth/operation-not-allowed": "El acceso con correo y contraseña no está habilitado en Firebase.",
-                "auth/too-many-requests": "Se hicieron demasiados intentos. Espera un momento antes de volver a intentarlo.",
-                "auth/network-request-failed": "No se pudo conectar con Firebase. Revisa tu conexión a internet.",
-                "auth/invalid-api-key": "La configuración de Firebase no es válida. Revisa la API key del proyecto."
-            };
-            const code = error && error.code;
-            const detalle = mensajes[code] || (typeof error === "string" ? error : error && error.message) || "Ocurrió un error inesperado.";
-            status.innerText = `${contexto}: ${detalle}${code && !mensajes[code] ? ` (código: ${code})` : ""}`;
-            status.className = "mt-3 text-sm text-red-400 font-semibold";
-            status.classList.remove('hidden');
-        }
-
-        async function solicitarRuta() {
-            if (!firebase.auth().currentUser || !userToken) {
-                return;
-            }
-
-            const lat = parseFloat(document.getElementById('lat').value);
-            const lon = parseFloat(document.getElementById('lon').value);
-
-            const response = await fetch('http://127.0.0.1:8080/api/orquestador/optimizar/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                },
-                body: JSON.stringify({ lat_origen: lat, lon_origen: lon })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                mostrarResultados(data);
-            } else {
-                alert("Error del servidor: " + (data.detail || JSON.stringify(data)));
-            }
-        }
-
-        function mostrarResultados(data) {
-            const resultsCard = document.getElementById('results-card');
-            const distContainer = document.getElementById('distancia-total');
-            const listContainer = document.getElementById('veredas-list');
-
-            resultsCard.classList.remove('hidden');
-            distContainer.innerText = `Distancia total estimada: ${data.distancia_total_km} km`;
-
-            listContainer.innerHTML = '';
-            data.ruta.forEach((item, index) => {
-                listContainer.innerHTML += `
-                    <div class="p-3 bg-slate-700 rounded flex justify-between items-center">
-                        <div>
-                            <span class="font-bold text-blue-400 mr-2">${index + 1}.</span>
-                            <span>${item.nombre}</span>
-                            <span class="text-xs text-slate-400 ml-2">(Vulnerabilidad: ${item.vulnerabilidad})</span>
-                        </div>
-                        <span class="text-sm font-mono text-emerald-300">+${item.distancia_tramo_km} km</span>
-                    </div>
-                `;
-            });
-        }
-    </script>
+  <script>
+    const firebaseConfig = {
+      apiKey: 'AIzaSyCOsVSYkuMtPb5oH8hiP5dwR-z8OxZrVbE',
+      authDomain: 'Tmaratonesprog.firebaseapp.com',
+      projectId: 'maratonesprog',
+      storageBucket: 'maratonesprog.firebasestorage.app',
+      messagingSenderId: '808331910760',
+      appId: '1:808331910760:web:90cdea6df87f9029ee65dd'
+    };
+    const API_URL = 'http://127.0.0.1:8080/api/orquestador/optimizar/';
+    let userToken = '';
+    const $ = id => document.getElementById(id);
+    const messages = {
+      'auth/invalid-email':'El formato del correo no es válido.',
+      'auth/invalid-credential':'El correo o la contraseña son incorrectos.',
+      'auth/wrong-password':'La contraseña es incorrecta.',
+      'auth/user-not-found':'No existe una cuenta con ese correo.',
+      'auth/user-disabled':'Esta cuenta está deshabilitada. Contacta al administrador.',
+      'auth/email-already-in-use':'Ya existe una cuenta con ese correo.',
+      'auth/weak-password':'La contraseña debe tener al menos 6 caracteres.',
+      'auth/operation-not-allowed':'Habilita Correo/Contraseña en Firebase Authentication.',
+      'auth/too-many-requests':'Demasiados intentos. Intenta más tarde.',
+      'auth/network-request-failed':'No se pudo conectar con Firebase. Comprueba tu red.',
+      'auth/invalid-api-key':'La clave de API de Firebase no es válida.'
+    };
+    function status(id, message = '', type = 'error') {
+      const el = $(id);
+      el.textContent = message;
+      el.className = message ? `status ${type}` : 'status hidden';
+    }
+    function authError(error, prefix) {
+      const detail = messages[error?.code] || error?.message || String(error);
+      status('auth-status', `${prefix}: ${detail}`);
+    }
+    function loading(id, active, text) {
+      const btn = $(id);
+      btn.disabled = active;
+      if (active) { btn.dataset.original = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> ' + text; }
+      else if (btn.dataset.original) { btn.innerHTML = btn.dataset.original; delete btn.dataset.original; }
+    }
+    function showDashboard(user) {
+      $('login-view').classList.add('hidden');
+      $('dashboard-view').classList.remove('hidden');
+      $('user-email').textContent = user?.email || 'Personal médico';
+    }
+    function showLogin() {
+      $('login-view').classList.remove('hidden');
+      $('dashboard-view').classList.add('hidden');
+      $('results-card').classList.add('hidden');
+      $('route-empty').classList.remove('hidden');
+      status('dashboard-status');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      $('toggle-password').addEventListener('click', () => {
+        const field = $('password');
+        const showing = field.type === 'password';
+        field.type = showing ? 'text' : 'password';
+        $('toggle-password').setAttribute('aria-label', showing ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        $('toggle-password').title = showing ? 'Ocultar contraseña' : 'Mostrar contraseña';
+      });
+      $('auth-form').addEventListener('submit', e => { e.preventDefault(); authenticate(false); });
+      $('register-button').addEventListener('click', () => authenticate(true));
+      $('logout-button').addEventListener('click', logout);
+      $('route-form').addEventListener('submit', e => { e.preventDefault(); solicitarRuta(); });
+      if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
+        status('auth-status', 'No se pudo cargar Firebase. Comprueba la conexión y el certificado HTTPS de www.gstatic.com.');
+        $('login-button').disabled = true;
+        $('register-button').disabled = true;
+        return;
+      }
+      try {
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().onAuthStateChanged(async user => {
+          if (!user) { userToken = ''; showLogin(); return; }
+          try {
+            userToken = await user.getIdToken();
+            if (firebase.auth().currentUser !== user) return;
+            status('auth-status');
+            showDashboard(user);
+          } catch (error) {
+            userToken = '';
+            showLogin();
+            authError(error, 'No se pudo validar la sesión');
+          }
+        });
+      } catch (error) { authError(error, 'Error al inicializar Firebase'); }
+    });
+    async function authenticate(register) {
+      const email = $('email').value.trim();
+      const password = $('password').value;
+      if (!$('email').checkValidity()) { status('auth-status','Introduce un correo electrónico válido.'); return; }
+      if (password.length < 6) { status('auth-status','La contraseña debe tener al menos 6 caracteres.'); return; }
+      status('auth-status');
+      const id = register ? 'register-button' : 'login-button';
+      loading(id, true, register ? 'Creando cuenta...' : 'Ingresando...');
+      try {
+        if (register) await firebase.auth().createUserWithEmailAndPassword(email, password);
+        else await firebase.auth().signInWithEmailAndPassword(email, password);
+      } catch (error) { authError(error, register ? 'No se pudo crear la cuenta' : 'No se pudo iniciar sesión'); }
+      finally { loading(id, false); }
+    }
+    async function logout() {
+      try { await firebase.auth().signOut(); }
+      catch (error) { status('dashboard-status', 'No se pudo cerrar sesión: ' + error.message); }
+    }
+    async function solicitarRuta() {
+      status('dashboard-status');
+      const lat = Number($('lat').value), lon = Number($('lon').value);
+      if (!$('lat').value || !$('lon').value || !Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status('dashboard-status', 'Introduce coordenadas válidas: latitud entre -90 y 90, longitud entre -180 y 180.'); return;
+      }
+      if (!firebase.auth().currentUser) { status('dashboard-status','Tu sesión ha expirado. Inicia sesión nuevamente.'); return; }
+      loading('route-button', true, 'Calculando recorrido...');
+      try {
+        const freshToken = await firebase.auth().currentUser.getIdToken();
+        userToken = freshToken;
+        const response = await fetch(API_URL, {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${freshToken}` },
+          body:JSON.stringify({ lat_origen:lat, lon_origen:lon })
+        });
+        const contentType = response.headers.get('content-type') || '';
+        const data = contentType.includes('application/json') ? await response.json() : {detail:await response.text()};
+        if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : `Error HTTP ${response.status}`);
+        mostrarResultados(data);
+      } catch (error) {
+        const message = error instanceof TypeError ? 'No fue posible conectar con la API. Comprueba que el servidor esté activo en 127.0.0.1:8080 y que CORS esté configurado.' : error.message;
+        status('dashboard-status', `No se pudo generar la ruta: ${message}`);
+      } finally { loading('route-button', false); }
+    }
+    function mostrarResultados(data) {
+      if (!data || !Array.isArray(data.ruta)) throw new Error('La respuesta del servidor no contiene una lista de rutas válida.');
+      const list = $('veredas-list');
+      list.replaceChildren();
+      const distance = Number(data.distancia_total_km);
+      $('distancia-total').replaceChildren();
+      $('distancia-total').append(document.createTextNode(Number.isFinite(distance) ? distance.toLocaleString('es-CO',{maximumFractionDigits:2}) : '—'));
+      const unit = document.createElement('small'); unit.textContent = 'km totales'; $('distancia-total').append(unit);
+      $('route-count').textContent = `${data.ruta.length} ${data.ruta.length === 1 ? 'parada' : 'paradas'}`;
+      data.ruta.forEach((item, i) => {
+        const li = document.createElement('li'); li.className = 'route-item';
+        const left = document.createElement('div'); left.className = 'route-item-left';
+        const number = document.createElement('span'); number.className = 'route-number'; number.textContent = String(i+1);
+        const info = document.createElement('div');
+        const name = document.createElement('span'); name.className = 'route-name'; name.textContent = String(item.nombre ?? 'Vereda sin nombre');
+        const detail = document.createElement('span'); detail.className = 'route-detail'; detail.textContent = `Vulnerabilidad: ${item.vulnerabilidad ?? 'No indicada'}`;
+        const km = document.createElement('span'); km.className = 'route-km'; km.textContent = `+${item.distancia_tramo_km ?? '—'} km`;
+        info.append(name,detail); left.append(number,info); li.append(left,km); list.append(li);
+      });
+      $('route-empty').classList.add('hidden');
+      $('results-card').classList.remove('hidden');
+    }
+  </script>
 </body>
-
 </html>
